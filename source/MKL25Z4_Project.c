@@ -48,6 +48,15 @@
  */
 int main(void) {
 
+	/*
+	 * TODO:
+	 * - Drive column lines via SPI0 (FreeRTOS)
+	 * - Drive row lines via GPIO (busy loop)
+	 * - Drive row lines via GPIO (FreeRTOS)
+	 * - Display fixed image
+	 * - Get image data via SPI
+	 */
+
     /* Init board hardware. */
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
