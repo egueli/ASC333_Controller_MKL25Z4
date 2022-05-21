@@ -16,21 +16,15 @@
 #include "queue.h"
 #include "timers.h"
 
-/* TODO: insert other definitions and declarations here. */
-
-/*******************************************************************************
- * Prototypes
- ******************************************************************************/
-
-static void master_task(void *pvParameters);
+#include "led_column_driver.h"
 
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
 /* Task priorities. */
-#define master_task_PRIORITY (configMAX_PRIORITIES - 1)
+#define led_column_driver_task_PRIORITY (configMAX_PRIORITIES - 1)
 // TODO determine actual stack size with uxTaskGetStackHighWaterMark()
-#define master_task_STACK_SIZE (configMINIMAL_STACK_SIZE + 512)
+#define led_column_driver_task_STACK_SIZE (configMINIMAL_STACK_SIZE + 512)
 
 /*
  * @brief   Application entry point.
@@ -57,19 +51,18 @@ int main(void) {
 
     PRINTF("ASC 333 Controller - Enrico Gueli 2022\n");
 
-    xTaskCreate(master_task, "Master_task", master_task_STACK_SIZE, NULL, master_task_PRIORITY, NULL);
+    xTaskCreate(
+    		led_column_driver_task,
+			"LED_column_driver_task",
+			led_column_driver_task_STACK_SIZE,
+			NULL,
+			led_column_driver_task_PRIORITY,
+			NULL
+	);
 
     vTaskStartScheduler();
     for (;;)
         ;
 }
 
-/*!
- * @brief Task responsible for master SPI communication.
- */
-static void master_task(void *pvParameters)
-{
-    PRINTF("Hi, I'm the master task. I will do absolutely anything. And now I leave.\n");
 
-	vTaskSuspend(NULL);
-}
