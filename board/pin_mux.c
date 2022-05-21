@@ -40,10 +40,9 @@ BOARD_InitPins:
 - pin_list:
   - {pin_num: '28', peripheral: UART0, signal: TX, pin_signal: TSI0_CH3/PTA2/UART0_TX/TPM2_CH1}
   - {pin_num: '27', peripheral: UART0, signal: RX, pin_signal: TSI0_CH2/PTA1/UART0_RX/TPM2_CH0}
-  - {pin_num: '73', peripheral: SPI0, signal: PCS0_SS, pin_signal: PTD0/SPI0_PCS0/TPM0_CH0}
-  - {pin_num: '74', peripheral: SPI0, signal: SCK, pin_signal: ADC0_SE5b/PTD1/SPI0_SCK/TPM0_CH1}
-  - {pin_num: '75', peripheral: SPI0, signal: SIN, pin_signal: PTD2/SPI0_MOSI/UART2_RX/TPM0_CH2/SPI0_MISO}
   - {pin_num: '76', peripheral: SPI0, signal: SOUT, pin_signal: PTD3/SPI0_MISO/UART2_TX/TPM0_CH3/SPI0_MOSI}
+  - {pin_num: '75', peripheral: GPIOD, signal: 'GPIO, 2', pin_signal: PTD2/SPI0_MOSI/UART2_RX/TPM0_CH2/SPI0_MISO}
+  - {pin_num: '74', peripheral: SPI0, signal: SCK, pin_signal: ADC0_SE5b/PTD1/SPI0_SCK/TPM0_CH1}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -67,14 +66,11 @@ void BOARD_InitPins(void)
     /* PORTA2 (pin 28) is configured as UART0_TX */
     PORT_SetPinMux(BOARD_INITPINS_DEBUG_UART_TX_PORT, BOARD_INITPINS_DEBUG_UART_TX_PIN, kPORT_MuxAlt2);
 
-    /* PORTD0 (pin 73) is configured as SPI0_PCS0 */
-    PORT_SetPinMux(PORTD, 0U, kPORT_MuxAlt2);
-
     /* PORTD1 (pin 74) is configured as SPI0_SCK */
     PORT_SetPinMux(BOARD_INITPINS_LED_BLUE_PORT, BOARD_INITPINS_LED_BLUE_PIN, kPORT_MuxAlt2);
 
-    /* PORTD2 (pin 75) is configured as SPI0_MISO */
-    PORT_SetPinMux(PORTD, 2U, kPORT_MuxAlt5);
+    /* PORTD2 (pin 75) is configured as PTD2 */
+    PORT_SetPinMux(PORTD, 2U, kPORT_MuxAsGpio);
 
     /* PORTD3 (pin 76) is configured as SPI0_MOSI */
     PORT_SetPinMux(PORTD, 3U, kPORT_MuxAlt5);
