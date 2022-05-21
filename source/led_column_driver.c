@@ -124,7 +124,7 @@ static void sendData() {
     /* Init Buffer */
     for (uint8_t i = 0; i < kBufferSize; i++)
     {
-    	txBuff[i] = i;
+    	txBuff[i] = 1u;
     }
 
 	status_t status = SPI_RTOS_Transfer(&master_rtos_handle, &masterXfer);
