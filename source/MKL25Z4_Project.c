@@ -49,7 +49,7 @@ int main(void) {
     BOARD_InitDebugConsole();
 #endif
 
-    PRINTF("ASC 333 Controller - Enrico Gueli 2022\n");
+    PRINTF("ASC 333 Controller - Enrico Gueli 2022\r\n");
 
     xTaskCreate(
     		led_column_driver_task,
