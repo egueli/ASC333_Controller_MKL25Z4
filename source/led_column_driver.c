@@ -18,6 +18,7 @@
 #include "fsl_debug_console.h"
 #include "fsl_spi.h"
 #include "fsl_spi_freertos.h"
+#include "fsl_gpio.h"
 
 /*******************************************************************************
  * Definitions
@@ -32,11 +33,18 @@
 #define COLUMN_DRIVER_SPI_MASTER_BASEADDR ((SPI_Type *)COLUMN_DRIVER_SPI_MASTER_BASE)
 #define SPI_NVIC_PRIO 2
 
+#define COLUMN_STROBE_GPIO (GPIOD)
+#define COLUMN_STROBE_GPIO_PIN (2u)
+
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
 static bool initSpi();
 static void sendData();
+
+static void initStrobe();
+static void beginStrobe();
+static void endStrobe();
 
 /*******************************************************************************
  * Variables
@@ -54,8 +62,15 @@ void led_column_driver_task(void *pvParameters)
         return;
 	}
 
+	initStrobe();
+
 	while(true) {
+		beginStrobe();
 		sendData();
+		endStrobe();
+
+		// Keep the row lighted with that data for 1ms
+	    vTaskDelay(portTICK_PERIOD_MS);
 	}
 	vTaskSuspend(NULL);
 }
@@ -78,7 +93,9 @@ static bool initSpi() {
      */
     spi_master_config_t masterConfig;
     SPI_MasterGetDefaultConfig(&masterConfig);
-    masterConfig.baudRate_Bps = 500000;
+    masterConfig.polarity = kSPI_ClockPolarityActiveLow;
+    masterConfig.phase = kSPI_ClockPhaseSecondEdge;
+    masterConfig.baudRate_Bps = 400000;
 
     uint32_t sourceClock = SPI_MASTER_CLK_FREQ;
     status_t status;
@@ -94,7 +111,7 @@ static bool initSpi() {
 }
 
 static void sendData() {
-	const size_t kBufferSize = 64;
+	const size_t kBufferSize = 11; // that's how many bytes can give room to 83 bits
 	uint8_t txBuff[kBufferSize];
 	uint8_t rxBuff[kBufferSize]; // won't use this one
 
@@ -110,9 +127,25 @@ static void sendData() {
     	txBuff[i] = i;
     }
 
-    status_t status = SPI_RTOS_Transfer(&master_rtos_handle, &masterXfer);
+	status_t status = SPI_RTOS_Transfer(&master_rtos_handle, &masterXfer);
     if (status != kStatus_Success)
     {
         PRINTF("SPI transfer completed with error. \r\n");
     }
+}
+
+static void initStrobe() {
+    gpio_pin_config_t column_strobe_config = {
+        kGPIO_DigitalOutput, 1,
+    };
+
+	GPIO_PinInit(COLUMN_STROBE_GPIO, COLUMN_STROBE_GPIO_PIN, &column_strobe_config);
+}
+
+static void beginStrobe() {
+    GPIO_WritePinOutput(COLUMN_STROBE_GPIO, COLUMN_STROBE_GPIO_PIN, 0);
+}
+
+static void endStrobe() {
+    GPIO_WritePinOutput(COLUMN_STROBE_GPIO, COLUMN_STROBE_GPIO_PIN, 1);
 }
