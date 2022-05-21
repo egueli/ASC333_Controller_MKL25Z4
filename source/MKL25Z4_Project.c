@@ -29,6 +29,8 @@ static void master_task(void *pvParameters);
  ******************************************************************************/
 /* Task priorities. */
 #define master_task_PRIORITY (configMAX_PRIORITIES - 1)
+// TODO determine actual stack size with uxTaskGetStackHighWaterMark()
+#define master_task_STACK_SIZE (configMINIMAL_STACK_SIZE + 512)
 
 /*
  * @brief   Application entry point.
@@ -55,7 +57,7 @@ int main(void) {
 
     PRINTF("ASC 333 Controller - Enrico Gueli 2022\n");
 
-    xTaskCreate(master_task, "Master_task", configMINIMAL_STACK_SIZE + 38, NULL, master_task_PRIORITY, NULL);
+    xTaskCreate(master_task, "Master_task", master_task_STACK_SIZE, NULL, master_task_PRIORITY, NULL);
 
     vTaskStartScheduler();
     for (;;)
