@@ -95,6 +95,7 @@ static bool initSpi() {
     SPI_MasterGetDefaultConfig(&masterConfig);
     masterConfig.polarity = kSPI_ClockPolarityActiveLow;
     masterConfig.phase = kSPI_ClockPhaseSecondEdge;
+    masterConfig.direction = kSPI_LsbFirst;
     masterConfig.baudRate_Bps = 400000;
 
     uint32_t sourceClock = SPI_MASTER_CLK_FREQ;
@@ -121,11 +122,15 @@ static void sendData() {
 			.dataSize = kBufferSize
     };
 
+    TickType_t ticks = xTaskGetTickCount();
+    uint32_t frame = ticks / 300;
+
     /* Init Buffer */
-    for (uint8_t i = 0; i < kBufferSize; i++)
-    {
-    	txBuff[i] = 1u;
-    }
+    memset(txBuff, 0, kBufferSize);
+    // Turn on one pixel at a time
+    uint32_t x = frame % (kBufferSize * 8);
+	PRINTF("x: %d\r\n", x);
+    txBuff[x >> 3] = 1 << (x % 8);
 
 	status_t status = SPI_RTOS_Transfer(&master_rtos_handle, &masterXfer);
     if (status != kStatus_Success)
