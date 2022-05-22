@@ -20,6 +20,8 @@
 #include "fsl_spi_freertos.h"
 #include "fsl_gpio.h"
 
+#include "pin_mux.h"
+
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -33,16 +35,12 @@
 #define COLUMN_DRIVER_SPI_MASTER_BASEADDR ((SPI_Type *)COLUMN_DRIVER_SPI_MASTER_BASE)
 #define SPI_NVIC_PRIO 2
 
-#define COLUMN_STROBE_GPIO (GPIOD)
-#define COLUMN_STROBE_GPIO_PIN (2u)
-
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
 static bool initSpi();
 static void sendColumnData();
 
-static void initStrobe();
 static void beginStrobe();
 static void endStrobe();
 
@@ -61,8 +59,6 @@ void led_column_driver_task(void *pvParameters)
         vTaskSuspend(NULL);
         return;
 	}
-
-	initStrobe();
 
 	while(true) {
 		beginStrobe();
@@ -139,18 +135,10 @@ static void sendColumnData() {
     }
 }
 
-static void initStrobe() {
-    gpio_pin_config_t column_strobe_config = {
-        kGPIO_DigitalOutput, 1,
-    };
-
-	GPIO_PinInit(COLUMN_STROBE_GPIO, COLUMN_STROBE_GPIO_PIN, &column_strobe_config);
-}
-
 static void beginStrobe() {
-    GPIO_WritePinOutput(COLUMN_STROBE_GPIO, COLUMN_STROBE_GPIO_PIN, 0);
+    GPIO_WritePinOutput(BOARD_INITPINS_COLUMN_STROBE_GPIO, BOARD_INITPINS_COLUMN_STROBE_PIN, 0);
 }
 
 static void endStrobe() {
-    GPIO_WritePinOutput(COLUMN_STROBE_GPIO, COLUMN_STROBE_GPIO_PIN, 1);
+    GPIO_WritePinOutput(BOARD_INITPINS_COLUMN_STROBE_GPIO, BOARD_INITPINS_COLUMN_STROBE_PIN, 1);
 }

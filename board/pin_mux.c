@@ -13,12 +13,15 @@ package_id: MKL25Z128VLK4
 mcu_data: ksdk2_0
 processor_version: 11.0.1
 board: FRDM-KL25Z
+pin_labels:
+- {pin_num: '75', pin_signal: PTD2/SPI0_MOSI/UART2_RX/TPM0_CH2/SPI0_MISO, label: 'J2[8]/D11', identifier: COLUMN_STROBE}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
 
 #include "fsl_common.h"
 #include "fsl_port.h"
+#include "fsl_gpio.h"
 #include "pin_mux.h"
 
 /* FUNCTION ************************************************************************************************************
@@ -41,7 +44,7 @@ BOARD_InitPins:
   - {pin_num: '28', peripheral: UART0, signal: TX, pin_signal: TSI0_CH3/PTA2/UART0_TX/TPM2_CH1}
   - {pin_num: '27', peripheral: UART0, signal: RX, pin_signal: TSI0_CH2/PTA1/UART0_RX/TPM2_CH0}
   - {pin_num: '76', peripheral: SPI0, signal: SOUT, pin_signal: PTD3/SPI0_MISO/UART2_TX/TPM0_CH3/SPI0_MOSI}
-  - {pin_num: '75', peripheral: GPIOD, signal: 'GPIO, 2', pin_signal: PTD2/SPI0_MOSI/UART2_RX/TPM0_CH2/SPI0_MISO}
+  - {pin_num: '75', peripheral: GPIOD, signal: 'GPIO, 2', pin_signal: PTD2/SPI0_MOSI/UART2_RX/TPM0_CH2/SPI0_MISO, direction: OUTPUT, gpio_init_state: 'true'}
   - {pin_num: '74', peripheral: SPI0, signal: SCK, pin_signal: ADC0_SE5b/PTD1/SPI0_SCK/TPM0_CH1}
   - {pin_num: '73', peripheral: GPIOD, signal: 'GPIO, 0', pin_signal: PTD0/SPI0_PCS0/TPM0_CH0}
   - {pin_num: '78', peripheral: GPIOD, signal: 'GPIO, 5', pin_signal: ADC0_SE6b/PTD5/SPI1_SCK/UART2_TX/TPM0_CH5}
@@ -67,6 +70,13 @@ void BOARD_InitPins(void)
     /* Port D Clock Gate Control: Clock enabled */
     CLOCK_EnableClock(kCLOCK_PortD);
 
+    gpio_pin_config_t COLUMN_STROBE_config = {
+        .pinDirection = kGPIO_DigitalOutput,
+        .outputLogic = 1U
+    };
+    /* Initialize GPIO functionality on pin PTD2 (pin 75)  */
+    GPIO_PinInit(BOARD_INITPINS_COLUMN_STROBE_GPIO, BOARD_INITPINS_COLUMN_STROBE_PIN, &COLUMN_STROBE_config);
+
     /* PORTA1 (pin 27) is configured as UART0_RX */
     PORT_SetPinMux(BOARD_INITPINS_DEBUG_UART_RX_PORT, BOARD_INITPINS_DEBUG_UART_RX_PIN, kPORT_MuxAlt2);
 
@@ -89,7 +99,7 @@ void BOARD_InitPins(void)
     PORT_SetPinMux(BOARD_INITPINS_LED_BLUE_PORT, BOARD_INITPINS_LED_BLUE_PIN, kPORT_MuxAlt2);
 
     /* PORTD2 (pin 75) is configured as PTD2 */
-    PORT_SetPinMux(PORTD, 2U, kPORT_MuxAsGpio);
+    PORT_SetPinMux(BOARD_INITPINS_COLUMN_STROBE_PORT, BOARD_INITPINS_COLUMN_STROBE_PIN, kPORT_MuxAsGpio);
 
     /* PORTD3 (pin 76) is configured as SPI0_MOSI */
     PORT_SetPinMux(PORTD, 3U, kPORT_MuxAlt5);
