@@ -40,7 +40,7 @@
  * Prototypes
  ******************************************************************************/
 static bool initSpi();
-static void sendData();
+static void sendColumnData();
 
 static void initStrobe();
 static void beginStrobe();
@@ -66,7 +66,7 @@ void led_column_driver_task(void *pvParameters)
 
 	while(true) {
 		beginStrobe();
-		sendData();
+		sendColumnData();
 		endStrobe();
 
 		// Keep the row lighted with that data for 1ms
@@ -111,7 +111,7 @@ static bool initSpi() {
     return true;
 }
 
-static void sendData() {
+static void sendColumnData() {
 	const size_t kBufferSize = 11; // that's how many bytes can give room to 83 bits
 	uint8_t txBuff[kBufferSize];
 	uint8_t rxBuff[kBufferSize]; // won't use this one
