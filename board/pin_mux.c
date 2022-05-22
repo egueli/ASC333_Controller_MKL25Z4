@@ -14,7 +14,12 @@ mcu_data: ksdk2_0
 processor_version: 11.0.1
 board: FRDM-KL25Z
 pin_labels:
+- {pin_num: '31', pin_signal: PTA5/USB_CLKIN/TPM0_CH2, label: 'J1[12]/D5', identifier: ROW_Q3_RED}
+- {pin_num: '33', pin_signal: PTA13/TPM1_CH1, label: 'J2[2]/D8', identifier: ROW_Q2}
+- {pin_num: '65', pin_signal: CMP0_IN2/PTC8/I2C0_SCL/TPM0_CH4, label: 'J1[14]', identifier: ROW_Q3_GREEN}
+- {pin_num: '73', pin_signal: PTD0/SPI0_PCS0/TPM0_CH0, label: 'J2[6]/D10', identifier: ROW_;ROW_Q0}
 - {pin_num: '75', pin_signal: PTD2/SPI0_MOSI/UART2_RX/TPM0_CH2/SPI0_MISO, label: 'J2[8]/D11', identifier: COLUMN_STROBE}
+- {pin_num: '78', pin_signal: ADC0_SE6b/PTD5/SPI1_SCK/UART2_TX/TPM0_CH5, label: 'J2[4]/D9', identifier: ROW_Q1}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -46,11 +51,11 @@ BOARD_InitPins:
   - {pin_num: '76', peripheral: SPI0, signal: SOUT, pin_signal: PTD3/SPI0_MISO/UART2_TX/TPM0_CH3/SPI0_MOSI}
   - {pin_num: '75', peripheral: GPIOD, signal: 'GPIO, 2', pin_signal: PTD2/SPI0_MOSI/UART2_RX/TPM0_CH2/SPI0_MISO, direction: OUTPUT, gpio_init_state: 'true'}
   - {pin_num: '74', peripheral: SPI0, signal: SCK, pin_signal: ADC0_SE5b/PTD1/SPI0_SCK/TPM0_CH1}
-  - {pin_num: '73', peripheral: GPIOD, signal: 'GPIO, 0', pin_signal: PTD0/SPI0_PCS0/TPM0_CH0}
-  - {pin_num: '78', peripheral: GPIOD, signal: 'GPIO, 5', pin_signal: ADC0_SE6b/PTD5/SPI1_SCK/UART2_TX/TPM0_CH5}
-  - {pin_num: '33', peripheral: GPIOA, signal: 'GPIO, 13', pin_signal: PTA13/TPM1_CH1}
-  - {pin_num: '65', peripheral: GPIOC, signal: 'GPIO, 8', pin_signal: CMP0_IN2/PTC8/I2C0_SCL/TPM0_CH4}
-  - {pin_num: '31', peripheral: GPIOA, signal: 'GPIO, 5', pin_signal: PTA5/USB_CLKIN/TPM0_CH2}
+  - {pin_num: '73', peripheral: GPIOD, signal: 'GPIO, 0', pin_signal: PTD0/SPI0_PCS0/TPM0_CH0, identifier: ROW_Q0, direction: OUTPUT, gpio_init_state: 'true'}
+  - {pin_num: '78', peripheral: GPIOD, signal: 'GPIO, 5', pin_signal: ADC0_SE6b/PTD5/SPI1_SCK/UART2_TX/TPM0_CH5, direction: OUTPUT, gpio_init_state: 'true'}
+  - {pin_num: '33', peripheral: GPIOA, signal: 'GPIO, 13', pin_signal: PTA13/TPM1_CH1, direction: OUTPUT, gpio_init_state: 'true'}
+  - {pin_num: '65', peripheral: GPIOC, signal: 'GPIO, 8', pin_signal: CMP0_IN2/PTC8/I2C0_SCL/TPM0_CH4, direction: OUTPUT, gpio_init_state: 'true'}
+  - {pin_num: '31', peripheral: GPIOA, signal: 'GPIO, 5', pin_signal: PTA5/USB_CLKIN/TPM0_CH2, direction: OUTPUT, gpio_init_state: 'true'}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -70,6 +75,34 @@ void BOARD_InitPins(void)
     /* Port D Clock Gate Control: Clock enabled */
     CLOCK_EnableClock(kCLOCK_PortD);
 
+    gpio_pin_config_t ROW_Q3_RED_config = {
+        .pinDirection = kGPIO_DigitalOutput,
+        .outputLogic = 1U
+    };
+    /* Initialize GPIO functionality on pin PTA5 (pin 31)  */
+    GPIO_PinInit(BOARD_INITPINS_ROW_Q3_RED_GPIO, BOARD_INITPINS_ROW_Q3_RED_PIN, &ROW_Q3_RED_config);
+
+    gpio_pin_config_t ROW_Q2_config = {
+        .pinDirection = kGPIO_DigitalOutput,
+        .outputLogic = 1U
+    };
+    /* Initialize GPIO functionality on pin PTA13 (pin 33)  */
+    GPIO_PinInit(BOARD_INITPINS_ROW_Q2_GPIO, BOARD_INITPINS_ROW_Q2_PIN, &ROW_Q2_config);
+
+    gpio_pin_config_t ROW_Q3_GREEN_config = {
+        .pinDirection = kGPIO_DigitalOutput,
+        .outputLogic = 1U
+    };
+    /* Initialize GPIO functionality on pin PTC8 (pin 65)  */
+    GPIO_PinInit(BOARD_INITPINS_ROW_Q3_GREEN_GPIO, BOARD_INITPINS_ROW_Q3_GREEN_PIN, &ROW_Q3_GREEN_config);
+
+    gpio_pin_config_t ROW_Q0_config = {
+        .pinDirection = kGPIO_DigitalOutput,
+        .outputLogic = 1U
+    };
+    /* Initialize GPIO functionality on pin PTD0 (pin 73)  */
+    GPIO_PinInit(BOARD_INITPINS_ROW_Q0_GPIO, BOARD_INITPINS_ROW_Q0_PIN, &ROW_Q0_config);
+
     gpio_pin_config_t COLUMN_STROBE_config = {
         .pinDirection = kGPIO_DigitalOutput,
         .outputLogic = 1U
@@ -77,23 +110,30 @@ void BOARD_InitPins(void)
     /* Initialize GPIO functionality on pin PTD2 (pin 75)  */
     GPIO_PinInit(BOARD_INITPINS_COLUMN_STROBE_GPIO, BOARD_INITPINS_COLUMN_STROBE_PIN, &COLUMN_STROBE_config);
 
+    gpio_pin_config_t ROW_Q1_config = {
+        .pinDirection = kGPIO_DigitalOutput,
+        .outputLogic = 1U
+    };
+    /* Initialize GPIO functionality on pin PTD5 (pin 78)  */
+    GPIO_PinInit(BOARD_INITPINS_ROW_Q1_GPIO, BOARD_INITPINS_ROW_Q1_PIN, &ROW_Q1_config);
+
     /* PORTA1 (pin 27) is configured as UART0_RX */
     PORT_SetPinMux(BOARD_INITPINS_DEBUG_UART_RX_PORT, BOARD_INITPINS_DEBUG_UART_RX_PIN, kPORT_MuxAlt2);
 
     /* PORTA13 (pin 33) is configured as PTA13 */
-    PORT_SetPinMux(PORTA, 13U, kPORT_MuxAsGpio);
+    PORT_SetPinMux(BOARD_INITPINS_ROW_Q2_PORT, BOARD_INITPINS_ROW_Q2_PIN, kPORT_MuxAsGpio);
 
     /* PORTA2 (pin 28) is configured as UART0_TX */
     PORT_SetPinMux(BOARD_INITPINS_DEBUG_UART_TX_PORT, BOARD_INITPINS_DEBUG_UART_TX_PIN, kPORT_MuxAlt2);
 
     /* PORTA5 (pin 31) is configured as PTA5 */
-    PORT_SetPinMux(PORTA, 5U, kPORT_MuxAsGpio);
+    PORT_SetPinMux(BOARD_INITPINS_ROW_Q3_RED_PORT, BOARD_INITPINS_ROW_Q3_RED_PIN, kPORT_MuxAsGpio);
 
     /* PORTC8 (pin 65) is configured as PTC8 */
-    PORT_SetPinMux(PORTC, 8U, kPORT_MuxAsGpio);
+    PORT_SetPinMux(BOARD_INITPINS_ROW_Q3_GREEN_PORT, BOARD_INITPINS_ROW_Q3_GREEN_PIN, kPORT_MuxAsGpio);
 
     /* PORTD0 (pin 73) is configured as PTD0 */
-    PORT_SetPinMux(PORTD, 0U, kPORT_MuxAsGpio);
+    PORT_SetPinMux(BOARD_INITPINS_ROW_Q0_PORT, BOARD_INITPINS_ROW_Q0_PIN, kPORT_MuxAsGpio);
 
     /* PORTD1 (pin 74) is configured as SPI0_SCK */
     PORT_SetPinMux(BOARD_INITPINS_LED_BLUE_PORT, BOARD_INITPINS_LED_BLUE_PIN, kPORT_MuxAlt2);
@@ -105,7 +145,7 @@ void BOARD_InitPins(void)
     PORT_SetPinMux(PORTD, 3U, kPORT_MuxAlt5);
 
     /* PORTD5 (pin 78) is configured as PTD5 */
-    PORT_SetPinMux(PORTD, 5U, kPORT_MuxAsGpio);
+    PORT_SetPinMux(BOARD_INITPINS_ROW_Q1_PORT, BOARD_INITPINS_ROW_Q1_PIN, kPORT_MuxAsGpio);
 
     SIM->SOPT5 = ((SIM->SOPT5 &
                    /* Mask bits to zero which are setting */
