@@ -62,6 +62,11 @@
                   <pin peripheral="SPI0" signal="SOUT" pin_num="76" pin_signal="PTD3/SPI0_MISO/UART2_TX/TPM0_CH3/SPI0_MOSI"/>
                   <pin peripheral="GPIOD" signal="GPIO, 2" pin_num="75" pin_signal="PTD2/SPI0_MOSI/UART2_RX/TPM0_CH2/SPI0_MISO"/>
                   <pin peripheral="SPI0" signal="SCK" pin_num="74" pin_signal="ADC0_SE5b/PTD1/SPI0_SCK/TPM0_CH1"/>
+                  <pin peripheral="GPIOD" signal="GPIO, 0" pin_num="73" pin_signal="PTD0/SPI0_PCS0/TPM0_CH0"/>
+                  <pin peripheral="GPIOD" signal="GPIO, 5" pin_num="78" pin_signal="ADC0_SE6b/PTD5/SPI1_SCK/UART2_TX/TPM0_CH5"/>
+                  <pin peripheral="GPIOA" signal="GPIO, 13" pin_num="33" pin_signal="PTA13/TPM1_CH1"/>
+                  <pin peripheral="GPIOC" signal="GPIO, 8" pin_num="65" pin_signal="CMP0_IN2/PTC8/I2C0_SCL/TPM0_CH4"/>
+                  <pin peripheral="GPIOA" signal="GPIO, 5" pin_num="31" pin_signal="PTA5/USB_CLKIN/TPM0_CH2"/>
                </pins>
             </function>
          </functions_list>
