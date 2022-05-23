@@ -73,29 +73,29 @@ void BOARD_InitBootPins(void);
   @{ */
 
 /* Symbols to be used with GPIO driver */
-#define BOARD_INITPINS_ROW_Q0_FGPIO FGPIOD             /*!<@brief FGPIO peripheral base pointer */
-#define BOARD_INITPINS_ROW_Q0_GPIO GPIOD               /*!<@brief GPIO peripheral base pointer */
-#define BOARD_INITPINS_ROW_Q0_GPIO_PIN_MASK (1U << 0U) /*!<@brief GPIO pin mask */
+#define BOARD_INITPINS_ROW_Q3_RED_FGPIO FGPIOD             /*!<@brief FGPIO peripheral base pointer */
+#define BOARD_INITPINS_ROW_Q3_RED_GPIO GPIOD               /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITPINS_ROW_Q3_RED_GPIO_PIN_MASK (1U << 0U) /*!<@brief GPIO pin mask */
 
 /* Symbols to be used with PORT driver */
-#define BOARD_INITPINS_ROW_Q0_PORT PORTD               /*!<@brief PORT peripheral base pointer */
-#define BOARD_INITPINS_ROW_Q0_PIN 0U                   /*!<@brief PORT pin number */
-#define BOARD_INITPINS_ROW_Q0_PIN_MASK (1U << 0U)      /*!<@brief PORT pin mask */
-                                                       /* @} */
+#define BOARD_INITPINS_ROW_Q3_RED_PORT PORTD               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_ROW_Q3_RED_PIN 0U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_ROW_Q3_RED_PIN_MASK (1U << 0U)      /*!<@brief PORT pin mask */
+                                                           /* @} */
 
 /*! @name PORTD5 (number 78), J2[4]/D9
   @{ */
 
 /* Symbols to be used with GPIO driver */
-#define BOARD_INITPINS_ROW_Q1_FGPIO FGPIOD             /*!<@brief FGPIO peripheral base pointer */
-#define BOARD_INITPINS_ROW_Q1_GPIO GPIOD               /*!<@brief GPIO peripheral base pointer */
-#define BOARD_INITPINS_ROW_Q1_GPIO_PIN_MASK (1U << 5U) /*!<@brief GPIO pin mask */
+#define BOARD_INITPINS_ROW_Q3_GREEN_FGPIO FGPIOD             /*!<@brief FGPIO peripheral base pointer */
+#define BOARD_INITPINS_ROW_Q3_GREEN_GPIO GPIOD               /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITPINS_ROW_Q3_GREEN_GPIO_PIN_MASK (1U << 5U) /*!<@brief GPIO pin mask */
 
 /* Symbols to be used with PORT driver */
-#define BOARD_INITPINS_ROW_Q1_PORT PORTD               /*!<@brief PORT peripheral base pointer */
-#define BOARD_INITPINS_ROW_Q1_PIN 5U                   /*!<@brief PORT pin number */
-#define BOARD_INITPINS_ROW_Q1_PIN_MASK (1U << 5U)      /*!<@brief PORT pin mask */
-                                                       /* @} */
+#define BOARD_INITPINS_ROW_Q3_GREEN_PORT PORTD               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_ROW_Q3_GREEN_PIN 5U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_ROW_Q3_GREEN_PIN_MASK (1U << 5U)      /*!<@brief PORT pin mask */
+                                                             /* @} */
 
 /*! @name PORTA13 (number 33), J2[2]/D8
   @{ */
@@ -115,29 +115,29 @@ void BOARD_InitBootPins(void);
   @{ */
 
 /* Symbols to be used with GPIO driver */
-#define BOARD_INITPINS_ROW_Q3_GREEN_FGPIO FGPIOC             /*!<@brief FGPIO peripheral base pointer */
-#define BOARD_INITPINS_ROW_Q3_GREEN_GPIO GPIOC               /*!<@brief GPIO peripheral base pointer */
-#define BOARD_INITPINS_ROW_Q3_GREEN_GPIO_PIN_MASK (1U << 8U) /*!<@brief GPIO pin mask */
+#define BOARD_INITPINS_ROW_Q1_FGPIO FGPIOC             /*!<@brief FGPIO peripheral base pointer */
+#define BOARD_INITPINS_ROW_Q1_GPIO GPIOC               /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITPINS_ROW_Q1_GPIO_PIN_MASK (1U << 8U) /*!<@brief GPIO pin mask */
 
 /* Symbols to be used with PORT driver */
-#define BOARD_INITPINS_ROW_Q3_GREEN_PORT PORTC               /*!<@brief PORT peripheral base pointer */
-#define BOARD_INITPINS_ROW_Q3_GREEN_PIN 8U                   /*!<@brief PORT pin number */
-#define BOARD_INITPINS_ROW_Q3_GREEN_PIN_MASK (1U << 8U)      /*!<@brief PORT pin mask */
-                                                             /* @} */
+#define BOARD_INITPINS_ROW_Q1_PORT PORTC               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_ROW_Q1_PIN 8U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_ROW_Q1_PIN_MASK (1U << 8U)      /*!<@brief PORT pin mask */
+                                                       /* @} */
 
 /*! @name PORTA5 (number 31), J1[12]/D5
   @{ */
 
 /* Symbols to be used with GPIO driver */
-#define BOARD_INITPINS_ROW_Q3_RED_FGPIO FGPIOA             /*!<@brief FGPIO peripheral base pointer */
-#define BOARD_INITPINS_ROW_Q3_RED_GPIO GPIOA               /*!<@brief GPIO peripheral base pointer */
-#define BOARD_INITPINS_ROW_Q3_RED_GPIO_PIN_MASK (1U << 5U) /*!<@brief GPIO pin mask */
+#define BOARD_INITPINS_ROW_Q0_FGPIO FGPIOA             /*!<@brief FGPIO peripheral base pointer */
+#define BOARD_INITPINS_ROW_Q0_GPIO GPIOA               /*!<@brief GPIO peripheral base pointer */
+#define BOARD_INITPINS_ROW_Q0_GPIO_PIN_MASK (1U << 5U) /*!<@brief GPIO pin mask */
 
 /* Symbols to be used with PORT driver */
-#define BOARD_INITPINS_ROW_Q3_RED_PORT PORTA               /*!<@brief PORT peripheral base pointer */
-#define BOARD_INITPINS_ROW_Q3_RED_PIN 5U                   /*!<@brief PORT pin number */
-#define BOARD_INITPINS_ROW_Q3_RED_PIN_MASK (1U << 5U)      /*!<@brief PORT pin mask */
-                                                           /* @} */
+#define BOARD_INITPINS_ROW_Q0_PORT PORTA               /*!<@brief PORT peripheral base pointer */
+#define BOARD_INITPINS_ROW_Q0_PIN 5U                   /*!<@brief PORT pin number */
+#define BOARD_INITPINS_ROW_Q0_PIN_MASK (1U << 5U)      /*!<@brief PORT pin mask */
+                                                       /* @} */
 
 /*!
  * @brief Configures pin routing and optionally pin electrical features.
