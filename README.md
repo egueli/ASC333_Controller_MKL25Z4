@@ -1,3 +1,13 @@
+# ASC 333 Led Marquee controller with Kinetis KL25
+
+## TODO
+
+- [x] Drive column lines via SPI0 (FreeRTOS)
+- [ ] Drive row lines via GPIO (busy loop)
+- [ ] Drive row lines via GPIO (FreeRTOS)
+- [ ] Display fixed image
+- [ ] Get image data via SPI
+
 # Pin mapping
 
 | Description      | MCU pin name | FRDM board pin name | ASC333 IC:pin | ASC333 wire color | Notes                                                                                                      |
