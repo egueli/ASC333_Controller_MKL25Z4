@@ -35,6 +35,10 @@
 #define COLUMN_DRIVER_SPI_MASTER_BASEADDR ((SPI_Type *)COLUMN_DRIVER_SPI_MASTER_BASE)
 #define SPI_NVIC_PRIO 2
 
+enum color { GREEN, RED };
+typedef enum color color_t;
+
+
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -44,7 +48,8 @@ static void sendColumnData();
 static void beginStrobe();
 static void endStrobe();
 
-static void activateRow(const int row);
+static void displayRow(const color_t color);
+static void activateRow(const int row, const color_t color);
 static void sendRowData(const bool q0, const bool q1, const bool q2, const bool q3Green, const bool q3Red);
 
 /*******************************************************************************
@@ -64,19 +69,23 @@ void led_column_driver_task(void *pvParameters)
 	}
 
 	while(true) {
-		for (int row = 0; row < 7; row++) {
-			beginStrobe();
-			sendColumnData();
-			activateRow(row);
-			endStrobe();
-
-			// Keep the row lighted with that data for 1ms
-		    vTaskDelay(portTICK_PERIOD_MS);
-		}
+		displayRow(RED);
+		displayRow(GREEN);
 	}
 	vTaskSuspend(NULL);
 }
 
+static void displayRow(const color_t color) {
+	for (int row = 0; row < 7; row++) {
+		beginStrobe();
+		sendColumnData();
+		activateRow(row, color);
+		endStrobe();
+
+		// Keep the row lighted with that data for 1ms
+	    vTaskDelay(portTICK_PERIOD_MS);
+	}
+}
 
 static bool initSpi() {
     NVIC_SetPriority(COLUMN_DRIVER_SPI_MASTER_IRQN, SPI_NVIC_PRIO);
@@ -149,13 +158,17 @@ static void endStrobe() {
     GPIO_WritePinOutput(BOARD_INITPINS_COLUMN_STROBE_GPIO, BOARD_INITPINS_COLUMN_STROBE_PIN, 1);
 }
 
-static void activateRow(const int row) {
+/*!
+ * @brief Activates the specified row and color of the display.
+ */
+static void activateRow(const int row, const color_t color) {
+	const int rowBits = (color == RED) ? row : ((row + 1) % 7);
 	sendRowData(
-		(row & (1 << 0)) != 0,
-		(row & (1 << 1)) != 0,
-		(row & (1 << 2)) != 0,
-        true,
-		false
+		(rowBits & (1 << 0)) != 0,
+		(rowBits & (1 << 1)) != 0,
+		(rowBits & (1 << 2)) != 0,
+        !(color == GREEN),
+		!(color == RED)
 	);
 }
 
