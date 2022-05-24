@@ -44,7 +44,8 @@ static void sendColumnData();
 static void beginStrobe();
 static void endStrobe();
 
-static void sendRowData(const int row);
+static void activateRow(const int row);
+static void sendRowData(const bool q0, const bool q1, const bool q2, const bool q3Green, const bool q3Red);
 
 /*******************************************************************************
  * Variables
@@ -66,7 +67,7 @@ void led_column_driver_task(void *pvParameters)
 		for (int row = 0; row < 7; row++) {
 			beginStrobe();
 			sendColumnData();
-			sendRowData(row);
+			activateRow(row);
 			endStrobe();
 
 			// Keep the row lighted with that data for 1ms
@@ -148,13 +149,20 @@ static void endStrobe() {
     GPIO_WritePinOutput(BOARD_INITPINS_COLUMN_STROBE_GPIO, BOARD_INITPINS_COLUMN_STROBE_PIN, 1);
 }
 
-static void sendRowData(const int row) {
-	const uint8_t q0 = (row & (1 << 0)) >> 0;
+static void activateRow(const int row) {
+	sendRowData(
+		(row & (1 << 0)) != 0,
+		(row & (1 << 1)) != 0,
+		(row & (1 << 2)) != 0,
+        (row & (1 << 3)) != 0,
+		true
+	);
+}
+
+static void sendRowData(const bool q0, const bool q1, const bool q2, const bool q3Green, const bool q3Red) {
 	GPIO_WritePinOutput(BOARD_INITPINS_ROW_Q0_GPIO, BOARD_INITPINS_ROW_Q0_PIN, q0);
-	const uint8_t q1 = (row & (1 << 1)) >> 1;
 	GPIO_WritePinOutput(BOARD_INITPINS_ROW_Q1_GPIO, BOARD_INITPINS_ROW_Q1_PIN, q1);
-	const uint8_t q2 = (row & (1 << 2)) >> 2;
 	GPIO_WritePinOutput(BOARD_INITPINS_ROW_Q2_GPIO, BOARD_INITPINS_ROW_Q2_PIN, q2);
-	const uint8_t q3 = (row & (1 << 3)) >> 3;
-	GPIO_WritePinOutput(BOARD_INITPINS_ROW_Q3_GREEN_GPIO, BOARD_INITPINS_ROW_Q3_GREEN_PIN, q3);
+	GPIO_WritePinOutput(BOARD_INITPINS_ROW_Q3_GREEN_GPIO, BOARD_INITPINS_ROW_Q3_GREEN_PIN, q3Green);
+	GPIO_WritePinOutput(BOARD_INITPINS_ROW_Q3_RED_GPIO, BOARD_INITPINS_ROW_Q3_RED_PIN, q3Red);
 }

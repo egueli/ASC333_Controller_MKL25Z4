@@ -3,8 +3,7 @@
 ## TODO
 
 - [x] Drive column lines via SPI0 (FreeRTOS)
-- [ ] Drive row lines via GPIO (busy loop)
-- [ ] Drive row lines via GPIO (FreeRTOS)
+- [x] Drive row lines via GPIO (FreeRTOS)
 - [ ] Display fixed image
 - [ ] Get image data via SPI
 
