@@ -154,8 +154,8 @@ static void activateRow(const int row) {
 		(row & (1 << 0)) != 0,
 		(row & (1 << 1)) != 0,
 		(row & (1 << 2)) != 0,
-        (row & (1 << 3)) != 0,
-		true
+        true,
+		false
 	);
 }
 
