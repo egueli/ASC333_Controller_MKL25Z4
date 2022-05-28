@@ -102,7 +102,8 @@ static void updateImage() {
     const uint32_t frame = ticks / 300;
 
 	// Turn on one pixel at a time
-	const uint32_t x = frame % (kLineSizeBytes * 8);
+	const uint32_t xRed = (frame + 8) % (kLineSizeBytes * 8);
+	const uint32_t xGreen = frame % (kLineSizeBytes * 8);
 
 	for (int row = 0; row < kNumRows; row++) {
 		uint8_t * const redRow = redRows[row];
@@ -113,8 +114,8 @@ static void updateImage() {
 		memset(greenRow, 0, kLineSizeBytes);
 
 		// set just the bit corresponding to the pixel to turn on
-		redRow[x >> 3] = 1 << (x % 8);
-		greenRow[x >> 3] = 1 << (x % 8);
+		redRow[xRed >> 3] = 1 << (xRed % 8);
+		greenRow[xGreen >> 3] = 1 << (xGreen % 8);
 	}
 }
 
