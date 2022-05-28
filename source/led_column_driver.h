@@ -44,7 +44,7 @@ typedef struct color_image color_image_t;
  * Prototypes
  ******************************************************************************/
 
-void led_column_driver_task(void *pvParameters);
+void ledColumnDriverTask(void *pvParameters);
 
 
 

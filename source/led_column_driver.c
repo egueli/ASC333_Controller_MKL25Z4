@@ -63,7 +63,7 @@ static color_image_t image;
 /*!
  * @brief Task responsible for controlling the LED column drivers.
  */
-void led_column_driver_task(void *pvParameters)
+void ledColumnDriverTask(void *pvParameters)
 {
 	if(!initSpi()) {
         vTaskSuspend(NULL);

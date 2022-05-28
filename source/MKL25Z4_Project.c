@@ -43,7 +43,7 @@ int main(void) {
     PRINTF("ASC 333 Controller - Enrico Gueli 2022\r\n");
 
     xTaskCreate(
-    		led_column_driver_task,
+    		ledColumnDriverTask,
 			"LED_column_driver_task",
 			led_column_driver_task_STACK_SIZE,
 			NULL,
