@@ -38,6 +38,11 @@
 enum color { GREEN, RED };
 typedef enum color color_t;
 
+/**
+ * The amount of bytes needed to represent an entire row of single-color pixels.
+ * This many bytes will be sent to the LED column shift registers.
+ */
+const size_t kLineSizeBytes = 11;
 
 /*******************************************************************************
  * Prototypes
@@ -123,23 +128,22 @@ static bool initSpi() {
 }
 
 static void sendColumnData() {
-	const size_t kBufferSize = 11; // that's how many bytes can give room to 83 bits
-	uint8_t txBuff[kBufferSize];
-	uint8_t rxBuff[kBufferSize]; // won't use this one
+	uint8_t txBuff[kLineSizeBytes];
+	uint8_t rxBuff[kLineSizeBytes]; // won't use this one
 
     spi_transfer_t masterXfer = {
     		.txData = txBuff,
 			.rxData = rxBuff,
-			.dataSize = kBufferSize
+			.dataSize = kLineSizeBytes
     };
 
     TickType_t ticks = xTaskGetTickCount();
     uint32_t frame = ticks / 300;
 
     /* Init Buffer */
-    memset(txBuff, 0, kBufferSize);
+    memset(txBuff, 0, kLineSizeBytes);
     // Turn on one pixel at a time
-    uint32_t x = frame % (kBufferSize * 8);
+    uint32_t x = frame % (kLineSizeBytes * 8);
 	PRINTF("x: %d\r\n", x);
     txBuff[x >> 3] = 1 << (x % 8);
 
