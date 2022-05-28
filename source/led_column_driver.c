@@ -42,12 +42,12 @@ typedef enum color color_t;
  * The amount of bytes needed to represent an entire row of single-color pixels.
  * This many bytes will be sent to the LED column shift registers.
  */
-const size_t kLineSizeBytes = 11;
+#define kLineSizeBytes (11)
 
 /**
  * How many rows the display have.
  */
-const size_t kNumRows = 7;
+#define kNumRows (7)
 
 /*******************************************************************************
  * Prototypes
