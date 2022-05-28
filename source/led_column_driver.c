@@ -2,7 +2,7 @@
  * led_column_driver.c
  *
  *  Created on: 21 May 2022
- *      Author: ris8a
+ *      Author: Enrico Gueli
  */
 
 #include "led_column_driver.h"
@@ -38,17 +38,6 @@
 enum color { GREEN, RED };
 typedef enum color color_t;
 
-/**
- * The amount of bytes needed to represent an entire row of single-color pixels.
- * This many bytes will be sent to the LED column shift registers.
- */
-#define kLineSizeBytes (11)
-
-/**
- * How many rows the display have.
- */
-#define kNumRows (7)
-
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -69,8 +58,7 @@ static void sendRowData(const bool q0, const bool q1, const bool q2, const bool 
  ******************************************************************************/
 static spi_rtos_handle_t master_rtos_handle;
 
-static uint8_t redRows[kNumRows][kLineSizeBytes];
-static uint8_t greenRows[kNumRows][kLineSizeBytes];
+static color_image_t image;
 
 /*!
  * @brief Task responsible for controlling the LED column drivers.
@@ -90,8 +78,8 @@ void led_column_driver_task(void *pvParameters)
 //				redRows[0][11]);
 
 		for (int row = 0; row < kNumRows; row++) {
-			displayRow(RED, row, redRows[row]);
-			displayRow(GREEN, row, greenRows[row]);
+			displayRow(RED, row, image.red[row]);
+			displayRow(GREEN, row, image.green[row]);
 		}
 	}
 	vTaskSuspend(NULL);
@@ -106,8 +94,8 @@ static void updateImage() {
 	const uint32_t xGreen = frame % (kLineSizeBytes * 8);
 
 	for (int row = 0; row < kNumRows; row++) {
-		uint8_t * const redRow = redRows[row];
-		uint8_t * const greenRow = greenRows[row];
+		uint8_t * const redRow = image.red[row];
+		uint8_t * const greenRow = image.green[row];
 
 		// clear the row
 		memset(redRow, 0, kLineSizeBytes);
