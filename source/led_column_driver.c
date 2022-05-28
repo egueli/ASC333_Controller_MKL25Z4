@@ -53,7 +53,9 @@ typedef enum color color_t;
  * Prototypes
  ******************************************************************************/
 static bool initSpi();
-static void sendColumnData();
+
+static void updateImage();
+static void sendColumnData(uint8_t (*const columnData)[]);
 
 static void beginStrobe();
 static void endStrobe();
@@ -67,6 +69,8 @@ static void sendRowData(const bool q0, const bool q1, const bool q2, const bool 
  ******************************************************************************/
 static spi_rtos_handle_t master_rtos_handle;
 
+static uint8_t redRows[kNumRows][kLineSizeBytes];
+
 /*!
  * @brief Task responsible for controlling the LED column drivers.
  */
@@ -78,17 +82,40 @@ void led_column_driver_task(void *pvParameters)
 	}
 
 	while(true) {
+		updateImage();
+//		PRINTF("redRows[0]: %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x \r\n",
+//				redRows[0][0], redRows[0][1], redRows[0][2], redRows[0][3], redRows[0][4], redRows[0][5],
+//				redRows[0][5], redRows[0][6], redRows[0][7], redRows[0][8], redRows[0][9], redRows[0][10],
+//				redRows[0][11]);
+
 		displayRow(RED);
-		displayRow(GREEN);
 	}
 	vTaskSuspend(NULL);
+}
+
+static void updateImage() {
+    const TickType_t ticks = xTaskGetTickCount();
+    const uint32_t frame = ticks / 300;
+
+	// Turn on one pixel at a time
+	const uint32_t x = frame % (kLineSizeBytes * 8);
+
+	for (int row = 0; row < kNumRows; row++) {
+		uint8_t * const redRow = redRows[row];
+
+		// clear the row
+		memset(redRow, 0, kLineSizeBytes);
+
+		// set just the bit corresponding to the pixel to turn on
+		redRow[x >> 3] = 1 << (x % 8);
+	}
 }
 
 static void displayRow(const color_t color) {
 	for (int row = 0; row < kNumRows; row++) {
 		beginStrobe();
-		sendColumnData();
-		activateRow(row, color);
+		sendColumnData(&redRows[row]);
+		activateRow(row, RED);
 		endStrobe();
 
 		// Keep the row lighted with that data for 1ms
@@ -131,25 +158,14 @@ static bool initSpi() {
     return true;
 }
 
-static void sendColumnData() {
-	uint8_t txBuff[kLineSizeBytes];
+static void sendColumnData(uint8_t (*const columnData)[]) {
 	uint8_t rxBuff[kLineSizeBytes]; // won't use this one
 
     spi_transfer_t masterXfer = {
-    		.txData = txBuff,
+    		.txData = *columnData,
 			.rxData = rxBuff,
 			.dataSize = kLineSizeBytes
     };
-
-    TickType_t ticks = xTaskGetTickCount();
-    uint32_t frame = ticks / 300;
-
-    /* Init Buffer */
-    memset(txBuff, 0, kLineSizeBytes);
-    // Turn on one pixel at a time
-    uint32_t x = frame % (kLineSizeBytes * 8);
-	PRINTF("x: %d\r\n", x);
-    txBuff[x >> 3] = 1 << (x % 8);
 
 	status_t status = SPI_RTOS_Transfer(&master_rtos_handle, &masterXfer);
     if (status != kStatus_Success)
