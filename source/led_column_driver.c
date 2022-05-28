@@ -55,12 +55,12 @@ typedef enum color color_t;
 static bool initSpi();
 
 static void updateImage();
-static void sendColumnData(uint8_t (*const columnData)[]);
+static void sendColumnData(uint8_t (*const columnData));
 
 static void beginStrobe();
 static void endStrobe();
 
-static void displayRow(const color_t color);
+static void displayRow(const color_t color, const int rowIndex, uint8_t (*const rowData));
 static void activateRow(const int row, const color_t color);
 static void sendRowData(const bool q0, const bool q1, const bool q2, const bool q3Green, const bool q3Red);
 
@@ -70,6 +70,7 @@ static void sendRowData(const bool q0, const bool q1, const bool q2, const bool 
 static spi_rtos_handle_t master_rtos_handle;
 
 static uint8_t redRows[kNumRows][kLineSizeBytes];
+static uint8_t greenRows[kNumRows][kLineSizeBytes];
 
 /*!
  * @brief Task responsible for controlling the LED column drivers.
@@ -88,7 +89,10 @@ void led_column_driver_task(void *pvParameters)
 //				redRows[0][5], redRows[0][6], redRows[0][7], redRows[0][8], redRows[0][9], redRows[0][10],
 //				redRows[0][11]);
 
-		displayRow(RED);
+		for (int row = 0; row < kNumRows; row++) {
+			displayRow(RED, row, redRows[row]);
+			displayRow(GREEN, row, greenRows[row]);
+		}
 	}
 	vTaskSuspend(NULL);
 }
@@ -102,25 +106,26 @@ static void updateImage() {
 
 	for (int row = 0; row < kNumRows; row++) {
 		uint8_t * const redRow = redRows[row];
+		uint8_t * const greenRow = greenRows[row];
 
 		// clear the row
 		memset(redRow, 0, kLineSizeBytes);
+		memset(greenRow, 0, kLineSizeBytes);
 
 		// set just the bit corresponding to the pixel to turn on
 		redRow[x >> 3] = 1 << (x % 8);
+		greenRow[x >> 3] = 1 << (x % 8);
 	}
 }
 
-static void displayRow(const color_t color) {
-	for (int row = 0; row < kNumRows; row++) {
-		beginStrobe();
-		sendColumnData(&redRows[row]);
-		activateRow(row, RED);
-		endStrobe();
+static void displayRow(const color_t color, const int rowIndex, uint8_t (*const rowData)) {
+	beginStrobe();
+	sendColumnData(rowData);
+	activateRow(rowIndex, color);
+	endStrobe();
 
-		// Keep the row lighted with that data for 1ms
-	    vTaskDelay(portTICK_PERIOD_MS);
-	}
+	// Keep the row lighted with that data for 1ms
+	vTaskDelay(portTICK_PERIOD_MS);
 }
 
 static bool initSpi() {
@@ -158,11 +163,11 @@ static bool initSpi() {
     return true;
 }
 
-static void sendColumnData(uint8_t (*const columnData)[]) {
+static void sendColumnData(uint8_t (*const columnData)) {
 	uint8_t rxBuff[kLineSizeBytes]; // won't use this one
 
     spi_transfer_t masterXfer = {
-    		.txData = *columnData,
+    		.txData = columnData,
 			.rxData = rxBuff,
 			.dataSize = kLineSizeBytes
     };
