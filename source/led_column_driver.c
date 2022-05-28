@@ -44,6 +44,11 @@ typedef enum color color_t;
  */
 const size_t kLineSizeBytes = 11;
 
+/**
+ * How many rows the display have.
+ */
+const size_t kNumRows = 7;
+
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -61,7 +66,6 @@ static void sendRowData(const bool q0, const bool q1, const bool q2, const bool 
  * Variables
  ******************************************************************************/
 static spi_rtos_handle_t master_rtos_handle;
-
 
 /*!
  * @brief Task responsible for controlling the LED column drivers.
@@ -81,7 +85,7 @@ void led_column_driver_task(void *pvParameters)
 }
 
 static void displayRow(const color_t color) {
-	for (int row = 0; row < 7; row++) {
+	for (int row = 0; row < kNumRows; row++) {
 		beginStrobe();
 		sendColumnData();
 		activateRow(row, color);
@@ -166,7 +170,7 @@ static void endStrobe() {
  * @brief Activates the specified row and color of the display.
  */
 static void activateRow(const int row, const color_t color) {
-	const int rowBits = (color == RED) ? row : ((row + 1) % 7);
+	const int rowBits = (color == RED) ? row : ((row + 1) % kNumRows);
 	sendRowData(
 		(rowBits & (1 << 0)) != 0,
 		(rowBits & (1 << 1)) != 0,
