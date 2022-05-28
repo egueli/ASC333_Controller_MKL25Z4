@@ -26,6 +26,12 @@
 // TODO determine actual stack size with uxTaskGetStackHighWaterMark()
 #define led_column_driver_task_STACK_SIZE (configMINIMAL_STACK_SIZE + 512)
 
+#define renderer_task_PRIORITY 1
+// TODO determine actual stack size with uxTaskGetStackHighWaterMark()
+#define renderer_task_STACK_SIZE (configMINIMAL_STACK_SIZE + 80)
+
+void rendererTask(void *pvParameters);
+
 /*
  * @brief   Application entry point.
  */
@@ -42,6 +48,8 @@ int main(void) {
 
     PRINTF("ASC 333 Controller - Enrico Gueli 2022\r\n");
 
+    ledColumnDriverInit();
+
     xTaskCreate(
     		ledColumnDriverTask,
 			"LED_column_driver_task",
@@ -51,9 +59,49 @@ int main(void) {
 			NULL
 	);
 
+    xTaskCreate(
+    		rendererTask,
+			"renderer_task",
+			renderer_task_STACK_SIZE,
+			NULL,
+			renderer_task_PRIORITY,
+			NULL
+	);
+
+
     vTaskStartScheduler();
     for (;;)
         ;
 }
 
+void rendererTask(void *pvParameters) {
+	uint32_t frame = 0;
 
+	while (true) {
+		// Turn on one pixel at a time
+		const uint32_t xRed = (frame + 8) % (kLineSizeBytes * 8);
+		const uint32_t xGreen = frame % (kLineSizeBytes * 8);
+
+		color_image_t image;
+
+		for (int row = 0; row < kNumRows; row++) {
+			uint8_t * const redRow = image.red[row];
+			uint8_t * const greenRow = image.green[row];
+
+			// clear the row
+			memset(redRow, 0, kLineSizeBytes);
+			memset(greenRow, 0, kLineSizeBytes);
+
+			// set just the bit corresponding to the pixel to turn on
+			redRow[xRed >> 3] = 1 << (xRed % 8);
+			greenRow[xGreen >> 3] = 1 << (xGreen % 8);
+		}
+
+		ledColumnDriverSendImage(&image);
+
+		frame++;
+		vTaskDelay(300 / portTICK_PERIOD_MS);
+	}
+
+	vTaskSuspend(NULL);
+}

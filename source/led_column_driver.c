@@ -60,6 +60,12 @@ static spi_rtos_handle_t master_rtos_handle;
 
 static color_image_t image;
 
+static QueueHandle_t imageQueue;
+
+void ledColumnDriverInit() {
+	imageQueue = xQueueCreate(1, sizeof(color_image_t));
+}
+
 /*!
  * @brief Task responsible for controlling the LED column drivers.
  */
@@ -86,25 +92,7 @@ void ledColumnDriverTask(void *pvParameters)
 }
 
 static void updateImage() {
-    const TickType_t ticks = xTaskGetTickCount();
-    const uint32_t frame = ticks / 300;
-
-	// Turn on one pixel at a time
-	const uint32_t xRed = (frame + 8) % (kLineSizeBytes * 8);
-	const uint32_t xGreen = frame % (kLineSizeBytes * 8);
-
-	for (int row = 0; row < kNumRows; row++) {
-		uint8_t * const redRow = image.red[row];
-		uint8_t * const greenRow = image.green[row];
-
-		// clear the row
-		memset(redRow, 0, kLineSizeBytes);
-		memset(greenRow, 0, kLineSizeBytes);
-
-		// set just the bit corresponding to the pixel to turn on
-		redRow[xRed >> 3] = 1 << (xRed % 8);
-		greenRow[xGreen >> 3] = 1 << (xGreen % 8);
-	}
+	xQueueReceive(imageQueue, &image, 0);
 }
 
 static void displayRow(const color_t color, const int rowIndex, uint8_t (*const rowData)) {
@@ -196,4 +184,8 @@ static void sendRowData(const bool q0, const bool q1, const bool q2, const bool 
 	GPIO_WritePinOutput(BOARD_INITPINS_ROW_Q2_GPIO, BOARD_INITPINS_ROW_Q2_PIN, q2);
 	GPIO_WritePinOutput(BOARD_INITPINS_ROW_Q3_GREEN_GPIO, BOARD_INITPINS_ROW_Q3_GREEN_PIN, q3Green);
 	GPIO_WritePinOutput(BOARD_INITPINS_ROW_Q3_RED_GPIO, BOARD_INITPINS_ROW_Q3_RED_PIN, q3Red);
+}
+
+void ledColumnDriverSendImage(color_image_t const * image) {
+	xQueueOverwrite(imageQueue, image);
 }
